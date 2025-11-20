@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>あなたにピッタリのイヤホン診断</title>
+<style>
+    body { font-family: Arial, sans-serif; background: #f9f9f9; color: #333; text-align: center; padding: 20px; }
+    .question-box { max-width: 500px; margin: auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    h1 { color: #000; }
+    button { display: block; width: 80%; margin: 10px auto; padding: 10px; font-size: 16px; border: none; border-radius: 5px; cursor: pointer; }
+    .yes { background-color: #4CAF50; color: white; }
+    .no { background-color: #f44336; color: white; }
+    .result { font-size: 18px; margin-top: 20px; font-weight: bold; }
+    img { max-width: 200px; margin-top: 10px; }
+</style>
+</head>
+<body>
+
+<h1>あなたにピッタリのイヤホン診断</h1>
+<div class="question-box" id="quiz">
+    <p id="question">ノイズキャンセリングは必要ですか？</p>
+    <button class="yes" onclick="nextQuestion('yes')">はい</button>
+    <button class="no" onclick="nextQuestion('no')">いいえ</button>
+</div>
+
+<div class="result" id="result"></div>
+
+<script>
+    let step = 1;
+
+    function nextQuestion(answer) {
+        const questionEl = document.getElementById('question');
+        const resultEl = document.getElementById('result');
+
+        if (step === 1) {
+            if (answer === 'yes') {
+                questionEl.textContent = '高音質重視ですか？';
+                step++;
+            } else {
+                questionEl.textContent = '運動中に使いますか？';
+                step = 4;
+            }
+        } else if (step === 2) {
+            if (answer === 'yes') {
+                showResult('WF-1000XM5', '最高音質＋業界トップのノイズキャンセリング', 'https://www.sony.jp/products/picture/WF-1000XM5.jpg');
+            } else {
+                questionEl.textContent = '価格を抑えたいですか？';
+                step++;
+            }
+        } else if (step === 3) {
+            if (answer === 'yes') {
+                showResult('WF-C710N / WF-C510N', 'コスパ重視でノイキャン搭載', 'https://www.sony.jp/products/picture/WF-C710N.jpg');
+            } else {
+                showResult('LinkBuds S', '軽量＋ノイキャンのバランスモデル', 'https://www.sony.jp/products/picture/LinkBudsS.jpg');
+            }
+        } else if (step === 4) {
+            if (answer === 'yes') {
+                showResult('LinkBuds Fit', '運動に最適なフィット感＋防滴性能', 'https://www.sony.jp/products/picture/LinkBudsFit.jpg');
+            } else {
+                questionEl.textContent = '周囲の音を自然に聞きたいですか？';
+                step++;
+            }
+        } else if (step === 5) {
+            if (answer === 'yes') {
+                showResult('LinkBuds Open', '完全オープン型で外音取り込み', 'https://www.sony.jp/products/picture/LinkBudsOpen.jpg');
+            } else {
+                showResult('LinkBuds Fit', '運動に最適なフィット感＋防滴性能', 'https://www.sony.jp/products/picture/LinkBudsFit.jpg');
+            }
+        }
+    }
+
+    function showResult(model, description, imgUrl) {
+        document.getElementById('quiz').style.display = 'none';
+        document.getElementById('result').innerHTML = `
+            あなたにおすすめのイヤホンは<br>
+            <strong>${model}</strong><br>
+            ${description}<br>
+            <img src="${imgUrl}" alt="${model}">
+        `;
+    }
+</script>
+
+</body>
+</html>
