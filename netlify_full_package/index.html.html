@@ -1,0 +1,423 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- 検索露出抑止（ページ単位） -->
+  <meta name="robots" content="noindex, nofollow" />
+  <title>ソニー完全ワイヤレスイヤホン診断（5段階評価・スコア非表示・最終版）</title>
+
+  <!-- Google Analytics 4 (GA4) タグ：測定ID G-DJP5SMCYGZ -->
+  <script async src="https://www.googletagmanager.com/gtGZ</script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    // ページビュー計測（標準）
+    gtag('config', 'G-DJP5SMCYGZ');
+  </script>
+
+  <style>
+    :root { --bg-start:#cfe8ff; --bg-end:#9fc7ff; --text:#0a1a2b; --white:#fff; --shadow:0 10px 30px rgba(0,0,0,.12); --choice-text:#333; --choice-border:#4a90e2; --choice-bg:#fff; --choice-selected-bg:#f0f8ff; --choice-selected-text:#222; --progress-track:rgba(255,255,255,0.70); --progress-fill:#d9dde5; }
+    html,body{height:100%}
+    body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;color:var(--text);background:linear-gradient(180deg,var(--bg-start),var(--bg-end));}
+    .container{max-width:980px;margin:0 auto;padding:16px}
+    .screen{min-height:100vh;display:none;align-items:center}
+    .screen.active{display:flex}
+    .screen-inner{width:100%;padding:24px 12px 40px}
+
+    h1.title{font-size:clamp(22px,5vw,32px);margin:16px 0 8px;font-weight:800;line-height:1.2}
+    p.desc{font-size:clamp(14px,3.5vw,16px);margin:0 0 24px;color:#243a57}
+
+    /* Buttons（共通） */
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:14px 18px;border-radius:999px;border:2px solid #111;background:#fff;color:#111;font-weight:700;text-decoration:none;cursor:pointer;box-shadow:var(--shadow);transition:transform .08s ease, box-shadow .2s ease;user-select:none}
+    .btn:active{transform:scale(0.98);box-shadow:0 6px 18px rgba(0,0,0,.12)}
+    .btn.black-outline{background:transparent;color:#111;border:2px solid #111}
+    .btn.white{background:#fff;color:#111;border-color:#111}
+
+    /* ▼ 質問回答ページ専用：濃グレー背景＋白文字（指定） */
+    .btn.qnav { color:#ffffff; background:#333333; border:2px solid #2a2a2a; box-shadow:none; padding:12px 16px; }
+
+    /* Progress */
+    .progress{margin-top:8px;margin-bottom:12px}
+    .progress-bar{width:100%;height:8px;background:var(--progress-track);border-radius:999px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(0,0,0,0.05)}
+    .progress-bar > .fill{height:100%;width:0%;background:var(--progress-fill);transition:width .25s ease}
+    .progress-text{font-size:13px;margin-top:6px;color:#1b2a3b;display:flex;justify-content:space-between}
+    #progressPct{display:none}
+
+    /* Question */
+    .q-title{font-size:clamp(18px,5vw,24px);font-weight:800;margin:18px 0 14px}
+    .bubble-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;align-items:center}
+    .bubble-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+    .bubble{background:var(--choice-bg);border:2px solid var(--choice-border);color:var(--choice-text);border-radius:999px;text-align:center;padding:18px 12px;font-weight:800;letter-spacing:.02em;box-shadow:0 6px 18px rgba(0,0,0,0.10);transition:transform .08s ease, background .15s ease, border-color .15s ease, color .15s ease, opacity .15s ease;cursor:pointer;user-select:none}
+    .bubble:active{transform:scale(0.98)}
+    .bubble.selected{transform:scale(0.98);background:var(--choice-selected-bg);border-color:var(--choice-border);color:var(--choice-selected-text)}
+    .bubble-row .bubble{min-width:160px;flex:0 1 240px}
+
+    /* Result lead & pill */
+    .result-lead{font-size:clamp(20px,6vw,30px);font-weight:900;margin:0 0 12px}
+    .pill{display:inline-block;color:#fff;padding:8px 14px;border-radius:999px;font-weight:800;letter-spacing:.02em;box-shadow:0 8px 22px rgba(0,0,0,0.18);margin-bottom:12px;transition:background .2s ease, color .2s ease;background:#111}
+
+    /* Result card */
+    .result-card{display:flex;gap:16px;align-items:stretch;background:#fff;border-radius:16px;box-shadow:var(--shadow);padding:14px;opacity:0;transform:translateY(10px)}
+    .result-card.show{opacity:1;transform:translateY(0);transition:opacity .35s ease, transform .35s ease}
+    .result-image{flex:0 0 40%;display:flex;align-items:center;justify-content:center;background:#f7f7f7;border-radius:12px;overflow:hidden}
+    .result-image img{width:100%;height:auto;object-fit:contain}
+    .result-body{flex:1;display:flex;flex-direction:column;gap:8px}
+    .product-name{font-size:clamp(20px,5vw,26px);font-weight:900;margin:0}
+    .product-copy{color:#2c3a4a;margin:4px 0 8px}
+    .feature-list{list-style:none;padding:0;margin:4px 0 10px}
+    .feature-list li{margin:6px 0}
+    .feature-list li::before{content:'✔';display:inline-block;font-weight:900;color:#0a7a3e;margin-right:8px}
+    .cta-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+
+    /* Recommend list */
+    .section-title{font-weight:900;margin:18px 0 8px}
+    .recommend-list{display:grid;gap:12px}
+    .vertical-card{display:flex;gap:10px;background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:10px;align-items:center;opacity:0;transform:translateY(10px)}
+    .vertical-card.show{opacity:1;transform:translateY(0);transition:opacity .35s ease, transform .35s ease}
+    .thumb{width:84px;height:84px;background:#f2f2f2;border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+    .thumb img{width:100%;height:100%;object-fit:contain}
+    .vertical-card .info{flex:1}
+    .vertical-card .name{font-weight:800;margin:0 0 4px}
+    .vertical-card .links{font-size:13px}
+    .vertical-card .bullets{margin-top:4px; font-size:13px; color:#2c3a4a}
+    .vertical-card .bullets li{margin:4px 0; list-style:none}
+    .vertical-card .bullets li::before{content:'・'; margin-right:6px; color:#2c3a4a}
+
+    .nav-row{margin-top:16px;display:flex;gap:8px;flex-wrap:wrap}
+
+    @media (max-width:520px){.result-card{flex-direction:row}.result-image{flex:0 0 46%}}
+    @media (max-width:420px){.result-card{flex-direction:column}.result-image{flex:0 0 auto}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- TOP -->
+    <section id="screen-top" class="screen active">
+      <div class="screen-inner">
+        <h1 class="title">あなたにぴったりの ソニー完全ワイヤレスイヤホン診断</h1>
+        <p class="desc">5つの質問に答えるだけで、あなたの使い方に最適なイヤホンを診断します。約30秒で完了！</p>
+        <button class="btn" id="startBtn">▶ 診断をはじめる</button>
+      </div>
+    </section>
+
+    <!-- 質問 -->
+    <section id="screen-q" class="screen">
+      <div class="screen-inner">
+        <div id="progress" class="progress">
+          <div class="progress-bar"><div class="fill" style="width:0%"></div></div>
+          <div class="progress-text">
+            <span id="progressPct">0%</span>
+            <span id="progressStep">0/5</span>
+          </div>
+        </div>
+        <h2 id="qTitle" class="q-title"></h2>
+        <div id="qOptions"></div>
+        <div class="nav-row">
+          <button class="btn qnav" id="backBtn">ひとつ前に戻る</button>
+          <button class="btn qnav" id="resetBtn">最初からやり直す</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 結果 -->
+    <section id="screen-result" class="screen">
+      <div class="screen-inner">
+        <h2 class="result-lead">あなたにピッタリなイヤホンはこちら！</h2>
+        <div id="resultPill" class="pill">おすすめ</div>
+        <div id="mainCard" class="result-card" aria-live="polite"></div>
+
+        <h3 class="section-title">こちらもおすすめ（2件）</h3>
+        <div id="recommend" class="recommend-list"></div>
+
+        <div class="nav-row">
+          <button class="btn white" id="resultBackBtn">前の質問に戻る</button>
+          <button class="btn white" id="resultResetBtn">最初からやり直す</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const OPEN_IN_NEW_TAB = false;
+
+    const PRODUCT_DATA = {
+      "WF-1000XM5": {name:"WF-1000XM5", url:"https://www.sony.jp/headphone/special/1000Xseries/", copy:"最高のノイズキャンセリングと音質で、毎日の通勤を快適に。", features:["圧倒的ノイズキャンセリング","Sony独自の高音質技術","長時間使用でも快適な形状"], img:"WF-1000XM5データ.png"},
+      "LinkBuds Fit": {name:"LinkBuds Fit", url:"https://www.sony.jp/headphone/special/LinkBuds_Fit/", copy:"軽量フィットで日常もスポーツも心地よく。", features:["小型・軽量で長時間装着に最適","自然な外音取り込み","バランスの良いNC"], img:"LBFitデータ.png"},
+      "LinkBuds S": {name:"LinkBuds S", url:"https://www.sony.jp/feature/products/220519/", copy:"業界トップクラスの小型軽量。快適でスマートな毎日へ。", features:["小型・軽量で快適","自然な外音取り込み","バランスの取れたNC"], img:"LBSデータ.png"},
+      "LinkBuds Open": {name:"LinkBuds Open", url:"https://www.sony.jp/headphone/special/LinkBuds_Open/", copy:"ながら聞きの最高峰。通話特化でビジネスにも◎", features:["耳をふさがない開放型","通話に強い","外音重視の設計"], img:"LBOpenデータ.png"},
+      "WF-C710N": {name:"WF-C710N", url:"https://www.sony.jp/headphone/special/WF-C710N/", copy:"高コスパでしっかりNC。毎日に寄り添う一台。", features:["しっかりしたNC","軽快で快適な装着感","豊富なカラー展開"], img:"WF-C710N データ.png"},
+      "WF-C510": {name:"WF-C510", url:"https://www.sony.jp/headphone/special/WF-C510/", copy:"手軽に始めるワイヤレス。カラフルで楽しい。", features:["低価格で手軽","カラバリ豊富","基本性能をしっかりカバー"], img:"WF-C510データ.png"}
+    };
+    const PRODUCTS = Object.keys(PRODUCT_DATA);
+
+    const PRODUCT_PILL_COLOR = {"WF-1000XM5":"#1b1c20","LinkBuds Fit":"#1aa89f","LinkBuds S":"#d1b895","LinkBuds Open":"#61adff","WF-C710N":"#33b8f0","WF-C510":"#ff8e2a"};
+
+    const QUESTIONS = [
+      {
+        id:'Q1', title:'使用目的はどれに近いですか？', type:'grid-4',
+        options:[
+          '音質・没入感（音楽に集中したい）',
+          'アクティブ（スポーツ・外出で使う）',
+          '長時間装着（快適さ重視）',
+          '手軽さ（普段使い・簡単操作）'
+        ],
+        pill:{
+          '音質・没入感（音楽に集中したい）':'音楽に没入したいあなたへ',
+          'アクティブ（スポーツ・外出で使う）':'アクティブに使いたいあなたへ',
+          '長時間装着（快適さ重視）':'長時間装着したいあなたへ',
+          '手軽さ（普段使い・簡単操作）':'手軽に使いたいあなたへ'
+        }
+      },
+      { id:'Q2', title:'ノイズキャンセリング（NC）の重視度は？', type:'row-3', options:['強NC（騒音をしっかりカット）','ほどほど（ある程度効けばOK）','外音重視（周囲の音も自然に聞きたい）'] },
+      { id:'Q3', title:'どんな装着感が好みですか？', type:'row-3', options:['しっかり耳にフィット（ズレにくい）','軽くてラク（長時間でも快適）','開放型（耳をふさがない）'] },
+      { id:'Q4', title:'見た目の好みは？', type:'row-3', options:['高級感','カラバリ','気分に合わせて色を変えたい'] },
+      { id:'Q5', title:'価格帯の希望は？', type:'row-3', options:['最上位OK','ほどほど','コスパ'] }
+    ];
+
+    const ratings = {
+      "WF-1000XM5": {
+        Q1: {"音質・没入感（音楽に集中したい）":5, "アクティブ（スポーツ・外出で使う）":3, "長時間装着（快適さ重視）":3, "手軽さ（普段使い・簡単操作）":1},
+        Q2: {"強NC（騒音をしっかりカット）":5, "ほどほど（ある程度効けばOK）":4, "外音重視（周囲の音も自然に聞きたい）":2},
+        Q3: {"しっかり耳にフィット（ズレにくい）":4, "軽くてラク（長時間でも快適）":3, "開放型（耳をふさがない）":1},
+        Q4: {"高級感":5, "カラバリ":2, "気分に合わせて色を変えたい":1},
+        Q5: {"最上位OK":4, "ほどほど":3, "コスパ":1}
+      },
+      "LinkBuds Fit": {
+        Q1: {"音質・没入感（音楽に集中したい）":3, "アクティブ（スポーツ・外出で使う）":4, "長時間装着（快適さ重視）":3, "手軽さ（普段使い・簡単操作）":2},
+        Q2: {"強NC（騒音をしっかりカット）":3, "ほどほど（ある程度効けばOK）":4, "外音重視（周囲の音も自然に聞きたい）":4},
+        Q3: {"しっかり耳にフィット（ズレにくい）":4, "軽くてラク（長時間でも快適）":3, "開放型（耳をふさがない）":1},
+        Q4: {"高級感":2, "カラバリ":3, "気分に合わせて色を変えたい":5},
+        Q5: {"最上位OK":3, "ほどほど":4, "コスパ":1}
+      },
+      "LinkBuds Open": {
+        Q1: {"音質・没入感（音楽に集中したい）":1, "アクティブ（スポーツ・外出で使う）":4, "長時間装着（快適さ重視）":3, "手軽さ（普段使い・簡単操作）":2},
+        Q2: {"強NC（騒音をしっかりカット）":1, "ほどほど（ある程度効けばOK）":1, "外音重視（周囲の音も自然に聞きたい）":5},
+        Q3: {"しっかり耳にフィット（ズレにくい）":2, "軽くてラク（長時間でも快適）":3, "開放型（耳をふさがない）":5},
+        Q4: {"高級感":3, "カラバリ":1, "気分に合わせて色を変えたい":5},
+        Q5: {"最上位OK":3, "ほどほど":4, "コスパ":1}
+      },
+      "LinkBuds S": {
+        Q1: {"音質・没入感（音楽に集中したい）":3, "アクティブ（スポーツ・外出で使う）":3, "長時間装着（快適さ重視）":4, "手軽さ（普段使い・簡単操作）":3},
+        Q2: {"強NC（騒音をしっかりカット）":3, "ほどほど（ある程度効けばOK）":4, "外音重視（周囲の音も自然に聞きたい）":3},
+        Q3: {"しっかり耳にフィット（ズレにくい）":2, "軽くてラク（長時間でも快適）":4, "開放型（耳をふさがない）":1},
+        Q4: {"高級感":2, "カラバリ":3, "気分に合わせて色を変えたい":1},
+        Q5: {"最上位OK":2, "ほどほど":4, "コスパ":2}
+      },
+      "WF-C710N": {
+        Q1: {"音質・没入感（音楽に集中したい）":2, "アクティブ（スポーツ・外出で使う）":3, "長時間装着（快適さ重視）":3, "手軽さ（普段使い・簡単操作）":5},
+        Q2: {"強NC（騒音をしっかりカット）":3, "ほどほど（ある程度効けばOK）":5, "外音重視（周囲の音も自然に聞きたい）":2},
+        Q3: {"しっかり耳にフィット（ズレにくい）":4, "軽くてラク（長時間でも快適）":3, "開放型（耳をふさがない）":1},
+        Q4: {"高級感":3, "カラバリ":5, "気分に合わせて色を変えたい":1},
+        Q5: {"最上位OK":1, "ほどほど":4, "コスパ":5}
+      },
+      "WF-C510": {
+        Q1: {"音質・没入感（音楽に集中したい）":2, "アクティブ（スポーツ・外出で使う）":2, "長時間装着（快適さ重視）":3, "手軽さ（普段使い・簡単操作）":5},
+        Q2: {"強NC（騒音をしっかりカット）":1, "ほどほど（ある程度効けばOK）":2, "外音重視（周囲の音も自然に聞きたい）":3},
+        Q3: {"しっかり耳にフィット（ズレにくい）":2, "軽くてラク（長時間でも快適）":4, "開放型（耳をふさがない）":1},
+        Q4: {"高級感":1, "カラバリ":5, "気分に合わせて色を変えたい":1},
+        Q5: {"最上位OK":1, "ほどほど":2, "コスパ":4}
+      }
+    };
+
+    const tieBreakOrder = ["Q2","Q3","Q1","Q5","Q4"];
+
+    let currentIndex = 0; const answers = {};
+    const screenTop = document.getElementById('screen-top');
+    const screenQ = document.getElementById('screen-q');
+    const screenResult = document.getElementById('screen-result');
+    const startBtn = document.getElementById('startBtn');
+    const backBtn = document.getElementById('backBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const resultBackBtn = document.getElementById('resultBackBtn');
+    const resultResetBtn = document.getElementById('resultResetBtn');
+    const progressFill = document.querySelector('.progress-bar .fill');
+    const progressPct = document.getElementById('progressPct');
+    const progressStep = document.getElementById('progressStep');
+    const qTitle = document.getElementById('qTitle');
+    const qOptions = document.getElementById('qOptions');
+    const resultPill = document.getElementById('resultPill');
+    const mainCard = document.getElementById('mainCard');
+    const recommend = document.getElementById('recommend');
+
+    function showScreen(target){[screenTop,screenQ,screenResult].forEach(s=>s.classList.remove('active'));target.classList.add('active');}
+    function updateProgress(){const step=Math.min(currentIndex+1,QUESTIONS.length);const pct=Math.round((step/QUESTIONS.length)*100);progressFill.style.width=pct+'%';progressPct.textContent=pct+'%';progressStep.textContent=`${step}/${QUESTIONS.length}`;}
+    function renderQuestion(){
+      const q=QUESTIONS[currentIndex];
+      updateProgress();
+      qTitle.textContent=q.title;
+      qOptions.innerHTML='';
+      if(q.type==='grid-4'){
+        const grid=document.createElement('div');grid.className='bubble-grid';
+        q.options.forEach(opt=>{
+          const b=document.createElement('button');b.className='bubble';b.textContent=opt;b.setAttribute('data-opt',opt);
+          b.addEventListener('click',()=>selectOption(opt));
+          grid.appendChild(b);
+        });
+        qOptions.appendChild(grid);
+      }else{
+        const row=document.createElement('div');row.className='bubble-row';
+        q.options.forEach(opt=>{
+          const b=document.createElement('button');b.className='bubble';b.textContent=opt;b.setAttribute('data-opt',opt);
+          b.addEventListener('click',()=>selectOption(opt));
+          row.appendChild(b);
+        });
+        qOptions.appendChild(row);
+      }
+    }
+    function selectOption(optId){
+      const el=qOptions.querySelector(`[data-opt="${optId}"]`);if(el)el.classList.add('selected');
+      const q=QUESTIONS[currentIndex];answers[q.id]=optId;
+      setTimeout(()=>{
+        if(currentIndex<QUESTIONS.length-1){
+          currentIndex+=1;renderQuestion();window.scrollTo({top:0,behavior:'smooth'});
+        }else{
+          computeAndRenderResult();
+          setTimeout(()=>{
+            showScreen(screenResult);window.scrollTo({top:0,behavior:'smooth'});
+            mainCard.classList.add('show');
+            Array.from(recommend.children).forEach((card,i)=>{setTimeout(()=>card.classList.add('show'),120+i*100);});
+          },350);
+        }
+      },160);
+    }
+    function pickTextColor(hex){
+      hex=hex.replace('#','');
+      const r=parseInt(hex.substring(0,2),16),g=parseInt(hex.substring(2,4),16),b=parseInt(hex.substring(4,6),16);
+      const L=0.2126*r+0.7152*g+0.0722*b;return L<140?'#fff':'#000';
+    }
+    function calcTotal(product,answers){
+      const r=ratings[product];let sum=0;
+      for(const q of ["Q1","Q2","Q3","Q4","Q5"]){
+        const opt=answers[q];const val=(opt&&r[q]&&r[q][opt])?r[q][opt]:1;sum+=val;
+      }
+      return sum;
+    }
+    function computeAndRenderResult(){
+      const scored=PRODUCTS.map(name=>({name,total:calcTotal(name,answers)}));
+      scored.sort((a,b)=>{
+        if(b.total!==a.total)return b.total-a.total;
+        for(const q of tieBreakOrder){
+          const ao=ratings[a.name][q][answers[q]]??1;
+          const bo=ratings[b.name][q][answers[q]]??1;
+          if(bo!==ao)return bo-ao;
+        }
+        return a.name.localeCompare(b.name);
+      });
+      const main=scored[0];
+      const top2=scored.slice(1,3);
+      const chosenQ1=answers['Q1'];
+      const pillText=(QUESTIONS[0].pill&&QUESTIONS[0].pill[chosenQ1])?QUESTIONS[0].pill[chosenQ1]:'あなたへのおすすめ';
+      resultPill.textContent=pillText;
+      const pillBg=PRODUCT_PILL_COLOR[main.name]||'#111';
+      resultPill.style.background=pillBg;
+      resultPill.style.color=pickTextColor(pillBg);
+      renderMainCard(main);
+      recommend.innerHTML='';
+      top2.forEach(item=>recommend.appendChild(renderVerticalCardWithReasons(item)));
+    }
+
+    function renderMainCard(item){
+      const key=item.name;const data=PRODUCT_DATA[key];
+      mainCard.innerHTML='';
+      const imgWrap=document.createElement('div');imgWrap.className='result-image';
+      const img=document.createElement('img');attachImageWithFallback(img,data.img);img.alt=data.name+' 画像';
+      imgWrap.appendChild(img);
+      const body=document.createElement('div');body.className='result-body';
+      const name=document.createElement('h3');name.className='product-name';name.textContent=`${data.name}`;
+      const copy=document.createElement('p');copy.className='product-copy';copy.textContent=data.copy;
+      const reasons=buildTopReasonsText(key,answers,3);
+      const reasonList=document.createElement('ul');reasonList.className='feature-list';
+      reasons.forEach(txt=>{
+        const li=document.createElement('li');li.textContent=txt;reasonList.appendChild(li);
+      });
+      const ctaRow=document.createElement('div');ctaRow.className='cta-row';
+      const aDetail=document.createElement('a');aDetail.className='btn black-outline';aDetail.href=data.url;aDetail.textContent='詳しく見る';
+      if(OPEN_IN_NEW_TAB)aDetail.target='_blank';aDetail.rel='noopener';
+      const aAll=document.createElement('a');aAll.className='btn black-outline';
+      aAll.href='https://www.sony.jp/headphone/special/trulywireless/?s_pid=jp_/headphone/products_LinkBuds_Fit';
+      aAll.textContent='全製品ラインナップ';
+      if(OPEN_IN_NEW_TAB)aAll.target='_blank';aAll.rel='noopener';
+      ctaRow.appendChild(aDetail);ctaRow.appendChild(aAll);
+      body.appendChild(name);body.appendChild(copy);body.appendChild(reasonList);body.appendChild(ctaRow);
+      mainCard.appendChild(imgWrap);mainCard.appendChild(body);
+      mainCard.classList.remove('show');
+    }
+
+    function buildTopReasonsText(product,answers,topN=3){
+      const items=[];
+      for(const q of ["Q2","Q3","Q1","Q5","Q4"]){
+        const opt=answers[q];if(!opt)continue;
+        const val=ratings[product][q][opt]??1;items.push({q,opt,val});
+      }
+      items.sort((a,b)=>b.val-a.val);
+      return items.slice(0,topN).map(e=>`${labelForQ(e.q)}「${e.opt}」にマッチ`);
+    }
+    function labelForQ(qid){
+      switch(qid){
+        case 'Q1':return '使用目的';
+        case 'Q2':return 'NC重視度';
+        case 'Q3':return '装着感';
+        case 'Q4':return '見た目';
+        case 'Q5':return '価格帯';
+        default:return qid;
+      }
+    }
+
+    function renderVerticalCardWithReasons(item){
+      const key=item.name;const data=PRODUCT_DATA[key];
+      const card=document.createElement('div');card.className='vertical-card';
+      const thumb=document.createElement('div');thumb.className='thumb';
+      const img=document.createElement('img');attachImageWithFallback(img,data.img);img.alt=data.name+' 画像';
+      thumb.appendChild(img);
+      const info=document.createElement('div');info.className='info';
+      const name=document.createElement('p');name.className='name';name.textContent=data.name;
+      const links=document.createElement('div');links.className='links';
+      const a=document.createElement('a');a.href=data.url;a.textContent='詳しく見る';
+      if(OPEN_IN_NEW_TAB)a.target='_blank';a.rel='noopener';
+      const bullets=document.createElement('ul');bullets.className='bullets';
+      buildTopReasonsText(key,answers,2).forEach(txt=>{
+        const li=document.createElement('li');li.textContent=txt;bullets.appendChild(li);
+      });
+      links.appendChild(a);
+      info.appendChild(name);
+      info.appendChild(bullets);
+      info.appendChild(links);
+      card.appendChild(thumb);
+      card.appendChild(info);
+      card.classList.remove('show');
+      return card;
+    }
+
+    function attachImageWithFallback(imgEl,filename){
+      imgEl.src=filename;
+      imgEl.onerror=()=>{
+        imgEl.onerror=null;
+        imgEl.src='images/'+filename;
+      };
+    }
+
+    startBtn.addEventListener('click',()=>{
+      currentIndex=0;Object.keys(answers).forEach(k=>delete answers[k]);
+      renderQuestion();showScreen(screenQ);window.scrollTo({top:0,behavior:'smooth'});
+    });
+    backBtn.addEventListener('click',()=>{
+      if(currentIndex>0){currentIndex-=1;renderQuestion();}
+      else{showScreen(screenTop);}
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+    resetBtn.addEventListener('click',()=>{
+      Object.keys(answers).forEach(k=>delete answers[k]);
+      currentIndex=0;showScreen(screenTop);window.scrollTo({top:0,behavior:'smooth'});
+    });
+    resultBackBtn.addEventListener('click',()=>{
+      currentIndex=QUESTIONS.length-1;showScreen(screenQ);renderQuestion();window.scrollTo({top:0,behavior:'smooth'});
+    });
+    resultResetBtn.addEventListener('click',()=>{
+      Object.keys(answers).forEach(k=>delete answers[k]);
+      currentIndex=0;showScreen(screenTop);window.scrollTo({top:0,behavior:'smooth'});
+    });
+   </script>
+</body>
